@@ -4,26 +4,83 @@ output: html_document
 date: "2024-01-22"
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+#Week 2 Lab
+
+## Chapter 8  (Functions)
+
+## 1) Write a function 'f' that behaves like this:
+## > f('Jim')
+## [1] "hello Jim, how are you?"
+## HINT: you will need to use the paste() function within your new function
+```{r}
+f <- function(jim) {
+  x <- paste("hello Jim, how are you?")
+  return(x)
+  }
+
+f("jim")
+```
+### 2) Write a function 'sumOfSquares' that behaves like this:
+
+### > d <- c(1,5,2,4,6,2,4,5)
+### > sumOfSquares(d)
+### [1] 21.875
+
+### To compute the "sum of squares", subtract the mean value of all numbers from each number. 
+### Square these numbers and sum them
+### (bonus: make a variant that can handle NAs)
+
+```{r}
+sumOfSquares <- function(d) {
+  
+  e <- d - mean(d)
+  f <- e^2 
+  g <- sum(f) 
+  
+  return(g)
+}
+
+d <- c(1,5,2,4,6,2,4,5)
+sumOfSquares(d)
 ```
 
-## R Markdown
+## Chapter 10  (Flow control)
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+### 4) Write a for loop that adds the numbers 1 to 10
+##HINT: you will need one variable that loops through the numbers 1 to 10 and one that keeps count through each loop
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+```{r}
+x <- 0
+y <- 1:10
+l <- length(y)
+n <- 0
+for (i in 1:l) {
+  x <- x + y[i] 
+  n = n + 1
+}
 
-```{r cars}
-summary(cars)
+x
+n
 ```
 
-## Including Plots
+### 5) Write a for loop that adds the odd numbers between 1 and 10 
 
-You can also embed plots, for example:
+```{r}
+a <- 0
+b <- seq(1, 10, 2)
+k <- length(b) 
+j <- 0
+for (q in 1:k) {
+  a <- a + b[q]
+  j = j + 1
+}
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+a
+j
+
+j == k
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+
