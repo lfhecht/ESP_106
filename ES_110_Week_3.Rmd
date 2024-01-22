@@ -1,7 +1,7 @@
 ---
-title: "ESP110 Week 2 Lab in Markdown"
+title: "**ESP110 Week 2 Lab in Markdown**"
 output: html_document
-date: "2024-01-22"
+date: "_2024-01-22_"
 ---
 
   
