@@ -79,8 +79,6 @@ Your data frame right now has one column with a year and one with the month. We 
 
 ```{r}
 
-?paste0
-
 data$Date <-paste0(data$Year, sep = "-", data$Month, sep = "-", 01)
 
 ```
@@ -108,9 +106,8 @@ Make sure to add proper axis labes and units (using +labs(x="",y=""))
  
  
 ```{r}
-library(ggplot2) #if you don't already have ggplot2 then install it using install.packages("ggplot2")
+library(ggplot2)
 
-x11()
 
 plot1 <- ggplot(data, aes(Date, MHHW, col = city)) +
   geom_line() +
