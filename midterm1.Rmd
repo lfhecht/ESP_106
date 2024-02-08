@@ -7,6 +7,7 @@ editor_options:
 
 ```{r setup, include=FALSE}
 library(knitr)
+library(ggplot2)
 ```
 
 In this midterm we will analyze some data on the conservation status of species in North America and spending under the Endangered Species Act. 
@@ -52,7 +53,7 @@ taxa = unique(conservation$taxon)
 num_species <- numeric(length(taxa))
 percentage <- numeric(length(taxa))
 
-for (i in 1:length(taxon)) {
+for (i in 1:length(taxa)) {
   num_species[i] <- sum(conservation$taxon == taxa[i])
   percentage[i] <- (num_species[i] / nrow(conservation)) * 100
 }
@@ -131,7 +132,7 @@ ggplot(subset(spending, Year == 2016), aes(speciesid, spending)) +
 
 spending_2016 <- subset(spending, Year == 2016)
   
-  spending_2016[order(spending_2016$spending, decreasing = TRUE), ]
+spending_2016 <- spending_2016[order(spending_2016$spending, decreasing = TRUE), ]
 
 top_3 <- spending_2016[1:3, 1]
 
@@ -150,7 +151,7 @@ merged_2016 <- subset(merged, Year == 2016)
   
 merged_2016 <- merged_2016[order(merged_2016$spending, decreasing = TRUE), ]
 
-merged_2016
+head(merged_2016)
 
 top_3_merged <- merged_2016[1:3, 2]
 
