@@ -1,5 +1,6 @@
 ---
 title: "Midterm One"
+author: Leo Hecht
 output: html_document
 editor_options: 
   chunk_output_type: console
@@ -123,6 +124,7 @@ ggplot(subset(spending, Year == 2016), aes(speciesid, spending)) +
   theme(axis.text.x=element_blank(), axis.ticks.x=element_blank(), axis.line.x = element_blank()) +
   labs(x = "Species", y = "Spending (in 2015 dollars)")
 
+## I converted the species codes to factors so that it is treated as a categorical variable rather than a continuous one. Then I subset the dataframe so that I am only working with 2016 data, and plotted the data as a scatter plot with species ID on the x axis and spending on the y-axis, removing some things at the x-axis to make the plot look cleaner.
 
 ```
 
@@ -138,6 +140,7 @@ top_3 <- spending_2016[1:3, 1]
 
 top_3
 
+## I subset the data to make sure I am only working with the 2016 data, then I ordered the data by descending spending, and indexed in to select the top 3 row's species codes.
 
 ```
 
@@ -156,6 +159,8 @@ head(merged_2016)
 top_3_merged <- merged_2016[1:3, 2]
 
 top_3_merged
+
+## Here I merged the two dataframes by species ID, subset the data so that I only had 2016 data, ordered it by descending spending, and indexed to find the top 3 species names.
 
 ``` 
 
@@ -187,6 +192,9 @@ ggplot(subset(merged_zeroless, Year == 2016), aes(speciesid, log_spending)) +
   theme(axis.text.x=element_blank(),  axis.line.x = element_blank()) +
   labs(x = "Species", y = "Log of Spending (in 2015 dollars)")
 
+
+## Here I subset the data by keeping only rows where spending did not equal zero, then created a new row that took the log of the spending row. 
+
 ```
 
 b) Run a regression of logged spending on taxonomic group and print the summary for the regression below (3 points)
@@ -197,6 +205,8 @@ regression <- lm(log_spending~taxon, data = merged_zeroless)
 summary <- summary(regression)
 
 print(summary) 
+
+## I ran a regression using the lm function with log of spending as the y variable and taxon as the x, then created a summary.
 
 ```
 
