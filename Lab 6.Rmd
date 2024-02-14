@@ -141,12 +141,28 @@ ratio
 7. Now we will make a map of blue whale density along the California coast and overlay the west coast MPAs. Use ggplot to create another map of the blue whale data, but crop to the smaller extent (given in question 5). Rather than plotting the point data, use stat_density_2d() to plot a smoothed out, continuous map of whale locations. Add the north american contient and the west coast MPA polygons. Plot 2 on Canvas shows you the plot you are aiming for.
 
 ```{r}
-#Hint: add data from stat_density_2d() directly to the plot using fill=after_stat(density) within the aes argument in that function. 
 
-#Hint2: by default ggplot will want to add countour lines. To show the data as colors instead, use geom="raster" and contour=FALSE in the stat_density_2d() function
 
-#Hint3: in the example on canvas I used the viridis color scale using scale_fill_viridis() after loading the viridis package. You are welcome to use different color scales though.
 
+ggplot() +
+  
+  stat_density2d(data = whale_migration, aes(x = long, y = lat, fill = after_stat(density)), geom = "raster", contour = FALSE, n = 175) +
+  
+  geom_sf(data = MPAs_cropped, aes(), fill = "transparent", color = "black") +
+  scale_fill_viridis() +
+  
+  geom_sf(data = NA_map_cropped) +
+  
+  coord_sf(xlim = c(-126.5, -116), ylim = c(32, 40), expand = FALSE) +
+  
+  labs(title = "Blue Whale Migration Data and Marine Protected Areas", x = NULL, y = NULL ) +
+  
+  guides(fill = guide_legend(title = "Density")) + 
+  
+  theme(plot.title = element_text(size = 12.2))
+
+
+ 
 
 
 ```
