@@ -189,7 +189,18 @@ merged <- merge(modeled_pivot, observed_pivot, by = c("yearmonth", "Name"))
 ```{r}
 
 ggplot() +
-  geom_point(data = merged, aes(x = merged$observed, y = merged$simulated))
+  
+  geom_point(data = merged, aes(x = merged$observed, y = merged$simulated, col = merged$Name)) +
+  
+  geom_abline(slope = 1) +
+  
+  geom_abline(slope = 1, intercept = 2, linetype = 2) +
+  
+  geom_abline(slope = 1, intercept = -2, linetype = 2) +
+  
+  labs(title = "Simulated vs. Observed Temperatures, 1991-2000", x = "Monthly Observed Temperature 1991-2000 (degrees C)", y = "Monthly Simulated Temperature 1991-2000 (degrees C)") +
+  guides(col = guide_legend(title="City"))
+  
 
 
 ```
