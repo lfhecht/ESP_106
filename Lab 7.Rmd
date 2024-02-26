@@ -5,10 +5,10 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 ```
 
-## Lab 7
+
 
 In this lab we will practice working with raster data, in this case in the context of climate models. I have given you 4 sets of data:
 
@@ -32,7 +32,7 @@ library("ncdf4")
 
 ```
 
-#Part 1
+## Part 1
 
 1a. Read in the historic climate model data as a raster brick(). Use "TREFHT" (temperature at reference height) in the varname argument.
 ```{r}
@@ -99,8 +99,7 @@ temp_raster <- brick(file_path2, varname = "tmp")
 
 ```
 
-3b. Note that this climate model data is for 1920-2005 but the observation data is only from 1991-2000. Use subset() from the raster package to subset the climate model data to just the years 1991-2000
-
+3b. Note that this climate model data is for 1920-2005 but the observation data is only from 1991-2000. Use subset() from the raster package to subset the climate model data to just the years 1991-2000.
 ```{r}
 
 years <- rep(1920:2005, each = 12)
@@ -111,9 +110,7 @@ subset_model <- raster::subset(histclim_rotated, 853:972)
 
 subset_model
 
-
 ```
-
 4. Use the extract() from the raster package to produce two data-frames, one with observed and one with modeled temperature values for each city. Change the units of the modeled data so they match the units of the observed data.
 
 ```{r}
@@ -122,9 +119,6 @@ modeled <- as.data.frame(raster::extract(subset_model, top10))
 modeled <- modeled - 273
 
 observed <- as.data.frame(raster::extract(temp_raster, top10))
-
-head(modeled)
-head(observed)
 
 ```
 
@@ -197,7 +191,7 @@ ggplot() +
 
 ```
 
-#Part 2
+## Part 2
 
 In the second part of the lab, we will use projections of future temperature change (until 2080) and a map of the distribution of population in 2020 to get global, population-weighted projected warming.
 
