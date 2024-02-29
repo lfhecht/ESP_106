@@ -1,0 +1,168 @@
+---
+title: "Midterm 2"
+output: html_document
+---
+
+## Midterm 2
+
+This midterm will require two datasets:
+
+1. A NetCDF file containing four layers with data on landuse in China. Each layer gives the fraction of the grid cell with land in the following land-types: urban (layer 1), cropland (layer 2), grassland (layer 3) and forest (layer 4). This file is named chinalanduse_MODIS_2012.nc - MODIS refers to the satellite data it is derived from and it is for the year 2012. This data came from this cool website: <https://terra.ipums.org/>
+
+2. A shapefile with polygons of provincial boundaries in China - chn_admbnda_adm1_ocha_2020.shp
+
+You will want to consider using the packages sf, raster, tidyr and ggplot2
+
+```{r}
+
+library(sf)
+library(raster)
+library(tidyr)
+library(ggplot2)
+
+
+```
+
+1. Read in the land use data as a raster brick and the shapefile as an sf object (2 points)
+
+```{r}
+
+china_landuse <- brick(file.path("C:/Users/Leo Hecht/Documents/ESP 106/chinalanduse_MODIS_2012.nc"))
+
+provinces <- st_read(file.path("C:/Users/Leo Hecht/Documents/ESP 106/Province Shapefile/chn_admbnda_adm1_ocha_2020.shp"))
+
+
+```
+
+2a. Crop the land use raster brick to the same extent as the shapefile of Chinese provinces (1 point)
+
+```{r}
+
+extent(provinces)
+
+landuse_cropped <- raster::crop(china_landuse, provinces)
+
+extent(landuse_cropped) 
+
+landuse_cropped
+
+
+```
+
+2b. Rename the layers in the raster brick so they provide information about what data is in each of the 4 layers (2 points)
+
+```{r}
+
+#Hint: check out the names() function to find and assign names of layers of raster objects
+
+names(landuse_cropped)
+
+names(landuse_cropped) <- c("urban", "cropland", "grassland", "forest")
+
+names(landuse_cropped)
+
+
+```
+
+3. Make a figure with four panels. Plot each raster brick layer on one of the panels and overlay the polygons of the Chinese provinces. Title each panel with the type of land use it shows. (4 points)
+
+BONUS: Not required for full points, but worth a bonus 2 points - use a for loop to make the four panels of your figure (2 BONUS points)
+
+```{r}
+
+
+par(mfrow=c(2,2))
+plot(landuse_cropped[[1]])
+title(main = "Urban Land Use")
+plot(provinces, add = TRUE, col = rgb(0, 0, 1, alpha = 0.01), border = "black")
+plot(landuse_cropped[[2]])
+title(main = "Agricultural Land Use")
+plot(provinces, add = TRUE, col = rgb(0, 0, 1, alpha = 0.01), border = "black")
+plot(landuse_cropped[[3]])
+title(main = "Grassland Land Use")
+plot(provinces, add = TRUE, col = rgb(0, 0, 1, alpha = 0.01), border = "black")
+plot(landuse_cropped[[4]])
+title(main = "Forest Land Use")
+plot(provinces, add = TRUE, col = rgb(0, 0, 1, alpha = 0.01), border = "black")
+
+
+
+
+```
+
+4a. Use the extract function in the raster package to find the fraction of each province in each of the four land use classes. [For this question you can assume all the grid cells have the same area] (3 points)
+
+```{r}
+#Hint: This step may take a long time. You might want to save the data frame after you extract the data so you don't have to run the code again. You can save objects in R as RData files (.Rdat) using save() and then read them in again using load(). 
+
+?`extract,Raster,SpatialPolygons-method`
+
+
+fraction <- raster::extract(landuse_cropped, provinces, df = TRUE)
+
+fraction_agg <- aggregate(fraction[, 3:ncol(fraction)], by = list(province_ID = fraction$ID), FUN = sum)
+
+# Normalize the aggregated data by the sum of all land use types within each province to get fractions
+fraction_agg[, -1] <- fraction_agg[, -1] / rowSums(fraction_agg[, -1], na.rm = TRUE)
+
+fraction_agg
+
+head(fraction_agg)
+
+save(fraction, file = "fraction.RData")
+
+load(file = "fraction.RData")
+
+
+fraction
+
+```
+
+4b. Describe the potential problem with the area assumption made in 4a. How might it affect the calculation in that step? What could we do if we didn't want to make that assumption? (You don't have to do it, just describe in theory) (2 points)
+
+**Answer: **
+
+4c. Sum up the fractions in the four land classes for each province and plot as a histogram. Why do they not sum to 1? (2 points) 
+
+```{r}
+
+fraction_agg_sum <- rowSums(fraction_agg[ , 2:4], na.rm = TRUE)
+
+fraction_agg_sum <- as.data.frame(fraction_agg_sum)
+
+fraction_agg_sum
+
+ggplot() +
+  geom_histogram(data = fraction_agg_sum, aes(x = fraction_agg_sum))
+
+
+
+```
+
+(Note: there are two polygons for which land-use data is missing and therefore the sum will be 0 - don't worry about that)
+
+**Answer: **
+
+```{r}
+
+```
+
+5a. Add in the names of the provinces to your data from step 4a (1 point)
+
+```{r}
+
+```
+
+5b. Pivot the data frame so you have "tidy" data (i.e. one row for each province-landuse type) (2 points)
+
+```{r}
+
+```
+
+6. Make a graph showing the breakdown of urban, cropland, grassland, and forest for each province. (4 points)
+
+```{r}
+
+```
+
+7. Upload your R markdown file, and your knitted output to Canvas. Push the R markdown file to your Github repository. (2 points)
