@@ -99,15 +99,13 @@ plot(provinces, add = TRUE, col = rgb(0, 0, 1, alpha = 0.01), border = "black")
 
 
 fraction <- raster::extract(landuse_cropped, provinces, df = TRUE)
+fraction2 <- raster::extract(landuse_cropped, provinces, df = TRUE, fun = sum) 
 
-fraction_agg <- aggregate(fraction[, 3:ncol(fraction)], by = list(province_ID = fraction$ID), FUN = sum)
 
-# Normalize the aggregated data by the sum of all land use types within each province to get fractions
-fraction_agg[, -1] <- fraction_agg[, -1] / rowSums(fraction_agg[, -1], na.rm = TRUE)
+fraction_agg <- aggregate(fraction2[, 3:ncol(fraction)], by = list(province_ID = fraction2$ID), FUN = sum)
 
 fraction_agg
 
-head(fraction_agg)
 
 save(fraction, file = "fraction.RData")
 
@@ -115,6 +113,8 @@ load(file = "fraction.RData")
 
 
 fraction
+
+
 
 ```
 
@@ -126,14 +126,61 @@ fraction
 
 ```{r}
 
-fraction_agg_sum <- rowSums(fraction_agg[ , 2:4], na.rm = TRUE)
 
-fraction_agg_sum <- as.data.frame(fraction_agg_sum)
 
-fraction_agg_sum
+
+for (i in 3:ncol(fraction_agg)) {
+  fraction_agg[, i] <- fraction_agg[, i] / sum(fraction_agg[, i], na.rm = TRUE)
+}
+
+# Sum up the normalized fractions in the four land classes for each province
+fraction_agg$Total <- rowSums(fraction_agg[, -1], na.rm = TRUE)
+
+fraction_agg
+
+# Plot the histogram
 
 ggplot() +
-  geom_histogram(data = fraction_agg_sum, aes(x = fraction_agg_sum))
+  geom_histogram(data = fraction_agg, aes(x = Total))
+
+
+hist(fraction_agg$Total, main = "Total Land Use Fractions by Province",
+     xlab = "Total Land Fraction", ylab = "Frequency", col = "skyblue")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+fraction_agg <- aggregate(fraction[, 3:ncol(fraction)], by = list(province_ID = fraction$ID), FUN = sum)
+
+# Step 3: Normalize the fractions by dividing each column by the sum of its values
+for (i in 2:ncol(fraction_agg)) {
+  fraction_agg[, i] <- fraction_agg[, i] / sum(fraction_agg[, i], na.rm = TRUE)
+}
+
+# Step 4: Calculate total fractions by summing up the normalized fractions for each province
+fraction_agg$Total <- rowSums(fraction_agg[, -1], na.rm = TRUE)
+
+# Plot the histogram of the total land use fractions
+hist(fraction_agg$Total, main = "Total Land Use Fractions by Province",
+     xlab = "Total Land Fraction", ylab = "Frequency", col = "skyblue")
+```
+
+```{r}
+
+# Extract land use values for each province
+extracted_values <- raster::extract(landuse_cropped, provinces, df = TRUE)
+
 
 
 
@@ -141,7 +188,7 @@ ggplot() +
 
 (Note: there are two polygons for which land-use data is missing and therefore the sum will be 0 - don't worry about that)
 
-**Answer: **
+**Answer: They do not sum up to one because I normalized the fractions based on each land use type rather than across all types, meaning the totals represent the fraction of land in each province that falls under any of the included land use types, which may not represent all land**
 
 ```{r}
 
