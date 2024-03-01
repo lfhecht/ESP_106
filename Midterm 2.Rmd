@@ -95,7 +95,7 @@ plot(provinces, add = TRUE, col = rgb(0, 0, 1, alpha = 0.01), border = "black")
 ```{r}
 #Hint: This step may take a long time. You might want to save the data frame after you extract the data so you don't have to run the code again. You can save objects in R as RData files (.Rdat) using save() and then read them in again using load(). 
 
-
+?`extract,Raster,sf-method`
 
 
 fraction <- raster::extract(landuse_cropped, provinces, df = TRUE)
@@ -159,7 +159,15 @@ head(fraction_pivoted)
 
 ```{r}
 
+fraction_pivoted_filtered  <- subset(fraction_pivoted, land_use != "Total")
 
+ggplot() +
+  
+  geom_bar(data = fraction_pivoted_filtered, aes(x = Name, y = value, fill = land_use), position = "stack", stat = "identity") +
+  
+  labs(title = "Land Use Across Chinese Provinces", x = "Province", y = "Percent") +
+  
+  guides(fill = guide_legend(title = "Land Use"))
 
 
 
