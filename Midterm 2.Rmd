@@ -103,9 +103,9 @@ fraction <- raster::extract(landuse_cropped, provinces, df = TRUE)
 
 fraction_agg <- aggregate(fraction[, 2:ncol(fraction)], by = list(province_ID = fraction$ID), FUN = mean)
 
-fraction_agg$Total <- rowSums(fraction_agg[, 2:5])
 
 
+?`extract,Raster,SpatialPolygons-method`
 
 save(fraction, file = "fraction.RData")
 
@@ -116,12 +116,13 @@ load(file = "fraction.RData")
 
 4b. Describe the potential problem with the area assumption made in 4a. How might it affect the calculation in that step? What could we do if we didn't want to make that assumption? (You don't have to do it, just describe in theory) (2 points)
 
-**Answer: **
+**Answer: The problem is that since I took the mean, if the cells are not all the same area then the larger cells are being weighted the same as smaller cells, even though they represent more area. If we didn't want to make this assumption we would have to **
 
 4c. Sum up the fractions in the four land classes for each province and plot as a histogram. Why do they not sum to 1? (2 points) 
 
 ```{r}
 
+fraction_agg$Total <- rowSums(fraction_agg[, 2:5])
 
 ggplot() +
   geom_histogram(data = fraction_agg, aes(x = Total))
@@ -129,18 +130,11 @@ ggplot() +
 
 ```
 
-```{r}
-
-
-```
-
 (Note: there are two polygons for which land-use data is missing and therefore the sum will be 0 - don't worry about that)
 
-**Answer: They do not sum up to one because I normalized the fractions based on each land use type rather than across all types, meaning the totals represent the fraction of land in each province that falls under any of the included land use types, which may not represent all land**
+**Answer: **
 
-```{r}
 
-```
 
 5a. Add in the names of the provinces to your data from step 4a (1 point)
 
