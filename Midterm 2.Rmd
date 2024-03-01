@@ -95,25 +95,21 @@ plot(provinces, add = TRUE, col = rgb(0, 0, 1, alpha = 0.01), border = "black")
 ```{r}
 #Hint: This step may take a long time. You might want to save the data frame after you extract the data so you don't have to run the code again. You can save objects in R as RData files (.Rdat) using save() and then read them in again using load(). 
 
-?`extract,Raster,SpatialPolygons-method`
+
 
 
 fraction <- raster::extract(landuse_cropped, provinces, df = TRUE)
-fraction2 <- raster::extract(landuse_cropped, provinces, df = TRUE, fun = sum) 
 
 
-fraction_agg <- aggregate(fraction2[, 3:ncol(fraction)], by = list(province_ID = fraction2$ID), FUN = sum)
+fraction_agg <- aggregate(fraction[, 2:ncol(fraction)], by = list(province_ID = fraction$ID), FUN = mean)
 
-fraction_agg
+fraction_agg$Total <- rowSums(fraction_agg[, 2:5])
+
 
 
 save(fraction, file = "fraction.RData")
 
 load(file = "fraction.RData")
-
-
-fraction
-
 
 
 ```
@@ -127,61 +123,13 @@ fraction
 ```{r}
 
 
-
-
-for (i in 3:ncol(fraction_agg)) {
-  fraction_agg[, i] <- fraction_agg[, i] / sum(fraction_agg[, i], na.rm = TRUE)
-}
-
-# Sum up the normalized fractions in the four land classes for each province
-fraction_agg$Total <- rowSums(fraction_agg[, -1], na.rm = TRUE)
-
-fraction_agg
-
-# Plot the histogram
-
 ggplot() +
   geom_histogram(data = fraction_agg, aes(x = Total))
 
 
-hist(fraction_agg$Total, main = "Total Land Use Fractions by Province",
-     xlab = "Total Land Fraction", ylab = "Frequency", col = "skyblue")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-fraction_agg <- aggregate(fraction[, 3:ncol(fraction)], by = list(province_ID = fraction$ID), FUN = sum)
-
-# Step 3: Normalize the fractions by dividing each column by the sum of its values
-for (i in 2:ncol(fraction_agg)) {
-  fraction_agg[, i] <- fraction_agg[, i] / sum(fraction_agg[, i], na.rm = TRUE)
-}
-
-# Step 4: Calculate total fractions by summing up the normalized fractions for each province
-fraction_agg$Total <- rowSums(fraction_agg[, -1], na.rm = TRUE)
-
-# Plot the histogram of the total land use fractions
-hist(fraction_agg$Total, main = "Total Land Use Fractions by Province",
-     xlab = "Total Land Fraction", ylab = "Frequency", col = "skyblue")
 ```
 
 ```{r}
-
-# Extract land use values for each province
-extracted_values <- raster::extract(landuse_cropped, provinces, df = TRUE)
-
-
 
 
 ```
@@ -198,17 +146,29 @@ extracted_values <- raster::extract(landuse_cropped, provinces, df = TRUE)
 
 ```{r}
 
+fraction_agg$Name <- provinces$ADM1_EN
+
+
 ```
 
 5b. Pivot the data frame so you have "tidy" data (i.e. one row for each province-landuse type) (2 points)
 
 ```{r}
 
+fraction_pivoted <- pivot_longer(fraction_agg, urban:Total, names_to = "land_use")
+
+head(fraction_pivoted)
+
 ```
 
 6. Make a graph showing the breakdown of urban, cropland, grassland, and forest for each province. (4 points)
 
 ```{r}
+
+
+
+
+
 
 ```
 
